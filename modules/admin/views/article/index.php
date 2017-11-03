@@ -29,7 +29,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'description:ntext',
             'content:ntext',
             'date',
-            // 'imagee',
+            [
+                'format' => 'html',
+                'label' => 'Image',
+                'value' => function($data) {
+                    return Html::img($data->getImage(), ['width' => 200]);
+                }
+            ],
             // 'viewed',
             // 'user_id',
             // 'status',

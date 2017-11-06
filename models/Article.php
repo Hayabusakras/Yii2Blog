@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
+use app\models\Comment;
 
 /**
  * This is the model class for table "article".
@@ -174,6 +175,16 @@ class Article extends \yii\db\ActiveRecord
     {
         $this->user_id = Yii::$app->user->id;
         return $this->save();
+    }
+
+    public function getComments()
+    {
+        return $this->hasMany(Comment::className(), ['article_id' => 'id']);
+    }
+
+    public function getArticleComments()
+    {
+        return $this->getComments()->where(['status'=>1])->all();
     }
 
 

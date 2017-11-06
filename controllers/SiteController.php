@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Article;
 use app\models\Category;
+use app\models\CommentForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
@@ -68,17 +69,23 @@ class SiteController extends Controller
 
     public function actionView($id)
     {
+
         $article = Article::findOne($id);
         $tags = ArrayHelper::map($article->tags, 'id', 'title');
         $popular = Article::getPopular();
         $recent = Article::getRecent();
         $categories = Category::getAll();
+        $comments = $article->getArticleComments();
+        $commentForm = new CommentForm();
+
         return $this->render('single', [
             'article' => $article,
-            'tags' => $tags,
             'popular' => $popular,
             'recent' => $recent,
             'categories' => $categories,
+            'tags' => $tags,
+            'comments' => $comments,
+            'commentForm' => $commentForm
         ]);
     }
 
@@ -115,4 +122,19 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+    public function actionComment($id)
+    {
+        $model = new CommentForm();
+
+        if (Yii::$app->request->isPost) {
+            $model->load(Yii::$app->request->post());
+            if ($model->saveComment($id)) {
+                Yii::$app->getSession()->setFLash('comment', 'Your comment will be added soon');
+                return $this->redirect(['site/view', 'id' => $id]);
+            }
+        }
+    }
+
+
 }

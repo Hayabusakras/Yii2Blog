@@ -35,16 +35,15 @@ class AuthController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
-
         return $this->goHome();
     }
 
     public function actionSignup()
     {
         $model = new SignupForm();
-        if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
             $model->load(Yii::$app->request->post());
-            if($model->signup()) {
+            if ($model->signup()) {
                 return $this->redirect(['auth/login']);
             }
 
@@ -52,15 +51,12 @@ class AuthController extends Controller
         return $this->render('signup', ['model' => $model]);
     }
 
-    public function actionTest()
+    public function actionLoginVk($uid, $first_name, $photo)
     {
-        $user = User::findOne(1);
-        Yii::$app->user->logout();
-        if(Yii::$app->user->isGuest)
-        {
-            echo "Пользователь Гость!";
-        } else {
-            echo "Welcome " . $user->name;
+        $user = new User();
+        if ($user->saveFromVk($uid, $first_name, $photo)) {
+            return $this->redirect(['site/index']);
         }
     }
+
 }
